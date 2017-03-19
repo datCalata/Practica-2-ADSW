@@ -26,30 +26,43 @@ public class HashListas implements Diccionario{
 
     @SuppressWarnings("rawtypes")
     public HashListas(int size){
-        //vamos a crear listas dinamicamente segun las necesitemos en put
+        //Vamos a crear listas dinamicamente segun las necesitemos en put
+        //Si la posicion del array no tiene una lista declarada a la hora de meter un elemento la declararemos en el put
         slots = new List[size];
     }
 
     @Override
-    public void put(String clave, String valor) {
+    public void put(String clave, String valor){
+        if(clave == null || clave.length() == 0){
+            throw new IllegalArgumentException("Clave Nula o vacia");
+        }
         int index = getIndex(clave);
         List<CV> listPos = slots[index];
-        //Si la lista es nula, nos creamos una
+        //Si la lista es nula (No existe), nos creamos una
         if(listPos == null){
             slots[index] = new ArrayList<CV>();
+
         }
-        //Creamos clave con lo que se nos pasa
-        CV cv = new CV(clave,valor);
-        //Metemos la clave en la lista
-        slots[index].add(cv);
-        //Incrementamos numero de datos totales
         nDatos++;
+        //Metemos la clave en la lista
+        //Si metemos una clave duplicada, sobre escribimos
+        for(int i = 0; i < slots[index].size(); i++){
+            if(slots[index].get(i) != null && OpMeter.compareTo(clave,slots[index].get(i).clave) == 0){
+                slots[index].get(i).valor = valor;
+                return;
+            }
+        }
+        slots[index].add(new CV(clave,valor));
     }
 
     private CV getCV(String clave){
+        //Nos protegemos contra parametros incorrectos
         List<CV> lista = slots[getIndex(clave)];
+        if(lista == null){
+            return null;
+        }
         for(CV s : lista){
-            if(s.clave.equals(clave)){
+            if(OpMeter.compareTo(s.clave,clave) == 0){
                 return s;
             }
         }
@@ -61,7 +74,11 @@ public class HashListas implements Diccionario{
     }
 
     @Override
-    public String get(String clave) {
+    public String get(String clave){
+        //Nos protegemos contra parametros incorrectos
+        if(clave == null || clave.length() == 0){
+            throw new IllegalArgumentException("Has introducido una clave nula o vacia");
+        }
         // Obtenemos el Objeto CV que tiene la misma clave
         CV myCV = getCV(clave);
         // Si ha devuelto nulo es que no este
@@ -72,17 +89,27 @@ public class HashListas implements Diccionario{
     }
 
     @Override
-    public String remove(String clave) {
-        CV myCV = getCV(clave);
-        //Si es nulo no existe luego salimos directamente
-        if (myCV == null) {
-            return null;
+    public String remove(String clave){
+        //Nos protegemos contra claves incorrectas
+        if (clave == null || clave.length() == 0) {
+            throw new IllegalArgumentException("Clave errónea");
         }
-        List<CV> lista = slots[getIndex(clave)];
-        lista.remove(myCV);
-        nDatos--;
-        return myCV.valor;
+        int index = getIndex(clave);
+        if(slots[index]!=null) {
+            for (int i = 0; i < slots[index].size(); i++) {
+                if (OpMeter.compareTo(clave, slots[index].get(i).clave) == 0) {
+                    String val = slots[index].get(i).valor;
+                    slots[index].remove(i);
+                    nDatos--;
+                    return val;
+                }
+
+            }
+        }
+
+        return null;
     }
+
 
     @Override
     public int size() {

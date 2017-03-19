@@ -11,17 +11,32 @@ public class Meter1Ops {
     private static final Random random = new Random();
 
     public static void main(String[] args) {
-        Diccionario diccionario = new DiccionarioLinealOps(100000);
+        Diccionario diccionario;
+
 
         int[] nn = {
                 // 1000,    // precalentamiento
                 1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000
         };
-        for (int n : nn) {
-            for (int i = 0; i < 3; i++) {
-                long t = meter(diccionario, n);
-                System.out.printf("%s %d%n", n, t);
-cr        }
+
+        System.out.println("Caso NS < ND");
+        for(int i = 500; i <= 5000; i+= 500){
+            diccionario = new HashListas(i);
+            for(int n = 0; n < 3; n++) {
+                long t = meter(diccionario, 5000);
+                System.out.printf("%s %d%n", i, t);
+            }
+        }
+
+
+        System.out.println("Caso NS >> ND");
+        for(int i = 20000; i <= 25000; i+= 500){
+            diccionario = new HashListas(i);
+            for(int n = 0; n < 3; n++) {
+                long t = meter(diccionario, 5000);
+                System.out.printf("%s %d%n", i, t);
+            }
+        }
     }
 
     private static long meter(Diccionario diccionario, int n) {
