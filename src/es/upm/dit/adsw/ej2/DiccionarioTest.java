@@ -3,6 +3,7 @@ package es.upm.dit.adsw.ej2;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.IllegalFormatCodePointException;
 import java.util.Random;
 
 import static org.junit.Assert.*;
@@ -17,26 +18,12 @@ public class DiccionarioTest {
 
     private Diccionario diccionario;
     public static final int N = 5;
-    private final Random random = new Random();
+
     @Before
     public void setUp(){
         diccionario = new HashListas (N);
     }
-    // CASOS SINGULARES
-    // ARGUMENTO NULL
 
-    @Test(expected = IllegalArgumentException.class)
-    public void testPutnull1(){
-        diccionario.put(null, "valor");
-    }
-    @Test(expected = IllegalArgumentException.class)
-    public void testGetnull(){
-        diccionario.get(null);
-    }
-    @Test(expected = IllegalArgumentException.class)
-    public void testRemovenull(){
-        diccionario.remove(null);
-    }
 
     //Prueba que lanza las excepciones con valores vacios
 
@@ -53,7 +40,7 @@ public class DiccionarioTest {
         diccionario.remove("");
     }
 
-    //  Prueba el correcto funcionamiento con diccionarios vacios
+    //  Vacios
 
     @Test
     public void testVacio(){
@@ -61,44 +48,41 @@ public class DiccionarioTest {
         assertNull(diccionarioL.remove("clave"));
         assertEquals(diccionarioL.size(),0);
         assertNull(diccionarioL.get("clave"));
-        diccionarioL.put("claveP", "valorP");
-        assertEquals(diccionarioL.size(),1);
-        diccionarioL.clear();
-        assertEquals(diccionarioL.size(),0);
         diccionarioL.clear();
         assertEquals(diccionarioL.size(),0);
     }
     @Test (expected = IllegalArgumentException.class)
-    public void testVacio1 () {
+    public void tesVacioPut () {
         diccionario.put ("","");
     }
     // N=0
 
 
     //Prueba el funcionamiento del put y el get
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testPut(){
         diccionario.clear();
         diccionario.put("1", "valor");
-        //No deberia dejar meterla
+        //Machaca el valor anterior
         diccionario.put("1", "valor5");
         diccionario.put("2", "valor1");
         diccionario.put("3", "valor2");
         diccionario.put("4", "valor3");
-        assertEquals("valor", diccionario.get("1"));
+        assertEquals("valor5", diccionario.get("1"));
         assertEquals("valor1", diccionario.get("2"));
         assertEquals("valor2", diccionario.get("3"));
         assertEquals("valor3", diccionario.get("4"));
     }
     // PUT
     @Test
-    public void testPut1() {
+    public void testPutSize() {
+        diccionario.clear();
         diccionario.put("clave0", "valor0");
         assertEquals(1, diccionario.size());
         diccionario.put("clave1", "valor1");
         assertEquals(2, diccionario.size());
-        assertEquals("valor0", diccionario.get("clave0"));
-        assertEquals("valor1", diccionario.get("clave1"));
+        diccionario.put("clave1", "valor2");
+        assertEquals(2,diccionario.size());
     }
     //Prueba el funcionamiento del size y el clear
     @Test
@@ -110,17 +94,10 @@ public class DiccionarioTest {
         diccionario.put("4", "valor3");
         assertEquals(diccionario.size(),4);
         diccionario.clear();
+        assertNull(diccionario.get("1"));
         assertEquals(diccionario.size(),0);
     }
-    // SECUENCIAS
-    // CLEAR
-    @Test
-    public void testClear1() {
-        diccionario.put("clave0", "valor0");
-        diccionario.put("clave1", "valor1");
-        diccionario.clear();
-        assertEquals(0, diccionario.size());
-    }
+
     //Prueba el funcionamiento del put con un numero de datos el doble de grande que numero de slots
     @Test
     public void testHash(){
@@ -149,10 +126,16 @@ public class DiccionarioTest {
     }
 
 
+    //TEST DE NULLS
+
     @Test(expected = IllegalArgumentException.class)
-    public void testNull () {
+    public void testNullPut () {
         diccionario.put (null, "valor");
     }
+    @Test(expected = IllegalArgumentException.class)
+    public void testNullGet () {diccionario.get(null);}
+    @Test(expected = IllegalArgumentException.class)
+    public void testNullRemove () {diccionario.remove(null);}
     // ARGUMENTO VACÍO
     @Test
     public void test00 (){
@@ -161,28 +144,28 @@ public class DiccionarioTest {
         assertNull (diccionario.remove("clave"));
     }
     // N=1
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void test01(){
         //Añadimos dos elementos con la misma clave
         diccionario.put("clave", "valor");
         assertEquals(1, diccionario.size());
         assertEquals("valor", diccionario.get("clave"));
-        //Esta clave no debería entrar
+        //Esta clave deberia machacar la otra
         diccionario.put("clave", "valor2");
         assertEquals(1, diccionario.size());
         diccionario.remove("clave");
         assertEquals(0, diccionario.size());
     }
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void test02() {
         diccionario.put("clave", "valor");
         diccionario.put("clave2", "valor2");
         assertEquals(2, diccionario.size());
         assertEquals("valor", diccionario.get("clave"));
         assertEquals("valor2", diccionario.get("clave2"));
-        //No nos deberia dejar meterlo
+        //Deberia machacar el valor de clave
         diccionario.put("clave", "valor3");
-        assertEquals("valor", diccionario.get("clave"));
+        assertEquals("valor3", diccionario.get("clave"));
         diccionario.remove("clave");
         assertEquals(1,diccionario.size());
         diccionario.put("clave","valor3");

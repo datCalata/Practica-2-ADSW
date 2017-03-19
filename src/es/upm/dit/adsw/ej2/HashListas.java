@@ -6,8 +6,9 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * Created by jcala on 12/03/2017.
+ * @autor G-23.10
  */
+
 public class HashListas implements Diccionario{
 
     private class CV{
@@ -31,6 +32,15 @@ public class HashListas implements Diccionario{
         slots = new List[size];
     }
 
+    /**
+     *Crearemos listas dinámicamente si son necesarias
+     * Decidimos en que posición de listPos deberá estar el objeto y si hay una lista ya creada la recorremos para comprobar que no hay
+     * claves duplicadas y lo metemos, sino la creamos;
+     *@param clave tipo String
+     *@param valor tipo
+     *@exception IllegalArgumentException, si los parámetros son nulos o Strings de longitud 0
+     */
+
     @Override
     public void put(String clave, String valor){
         if(clave == null || clave.length() == 0){
@@ -43,17 +53,25 @@ public class HashListas implements Diccionario{
             slots[index] = new ArrayList<CV>();
 
         }
-        nDatos++;
+
         //Metemos la clave en la lista
         //Si metemos una clave duplicada, sobre escribimos
         for(int i = 0; i < slots[index].size(); i++){
             if(slots[index].get(i) != null && OpMeter.compareTo(clave,slots[index].get(i).clave) == 0){
                 slots[index].get(i).valor = valor;
+                //Si machacamos un dato no aumentamos el contador de datos
                 return;
             }
         }
         slots[index].add(new CV(clave,valor));
+        nDatos++;
     }
+
+    /**Getter
+     *@param clave tipo String
+     *@return s si encuentra la clave;
+     * null si no esta en la lista o es una lista vacia;
+     */
 
     private CV getCV(String clave){
         //Nos protegemos contra parametros incorrectos
@@ -69,9 +87,24 @@ public class HashListas implements Diccionario{
         return null;
     }
 
+    /**Getter
+     *@param clave tipo String
+     *@return el indice donde debe estar la clave
+     *
+     */
+
     private int getIndex(String clave){
         return Math.abs(clave.hashCode() % slots.length);
     }
+
+
+    /**Getter
+     *@param clave tipo String
+     *@see getCV
+     *@return devuelve el valor del objeto;
+     * null si no es;
+     *@throws IllegalArgumentException cuando se introduce una clave nula o vacia
+     */
 
     @Override
     public String get(String clave){
@@ -87,6 +120,14 @@ public class HashListas implements Diccionario{
         }
         return null;
     }
+
+    /**Elimina el objeto de la clace
+     *@param clave tipo String
+     *@return val que es el valor eliminado
+     * null si no es;
+     *@throws IllegalArgumentException cuando se introduce una clave nula o vacia
+     */
+
 
     @Override
     public String remove(String clave){
@@ -111,6 +152,8 @@ public class HashListas implements Diccionario{
     }
 
 
+    /**@return nDatos
+     */
     @Override
     public int size() {
         return nDatos;

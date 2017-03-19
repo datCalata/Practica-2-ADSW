@@ -10,33 +10,47 @@ import java.util.Random;
 public class Meter1Ops {
     private static final Random random = new Random();
 
+    private static int[] matlab1i,matlab2i;
+    private static long[] matlab1t,matlab2t;
+
+
     public static void main(String[] args) {
         Diccionario diccionario;
+        matlab1i = new int[3*(5000/500)];
+        matlab2i = new int[3*(25000-20000)/500 + 3];
+        matlab1t = new long[3*5000/500];
+        matlab2t = new long[3*(25000-20000)/500 + 3];
 
-
-        int[] nn = {
-                // 1000,    // precalentamiento
-                1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000
-        };
-
+        int index = 0;
         System.out.println("Caso NS < ND");
         for(int i = 500; i <= 5000; i+= 500){
             diccionario = new HashListas(i);
             for(int n = 0; n < 3; n++) {
                 long t = meter(diccionario, 5000);
                 System.out.printf("%s %d%n", i, t);
+                matlab1i[index] = i;
+                matlab1t[index] = t;
+                index++;
             }
         }
 
-
+        index  = 0;
         System.out.println("Caso NS >> ND");
         for(int i = 20000; i <= 25000; i+= 500){
             diccionario = new HashListas(i);
             for(int n = 0; n < 3; n++) {
                 long t = meter(diccionario, 5000);
                 System.out.printf("%s %d%n", i, t);
+                matlab2i[index] = i;
+                matlab2t[index] = t;
+                index++;
             }
         }
+
+        printMatlab(matlab1i,"numeroSlots1");
+        printMatlab(matlab1t,"Complejidad1");
+        printMatlab(matlab2i,"numeroSlots2");
+        printMatlab(matlab2t,"Complejidad2");
     }
 
     private static long meter(Diccionario diccionario, int n) {
@@ -72,5 +86,20 @@ public class Meter1Ops {
             String valor = mkValue(r);
             diccionario.put(clave, valor);
         } while (diccionario.size() < n);
+    }
+
+    private static void printMatlab(int[] numeros,String var){
+        System.out.printf("%s = [",var);
+        for(int i : numeros){
+            System.out.printf("%d,",i);
+        }
+        System.out.println("]");
+    }
+    private static void printMatlab(long[] numeros, String var){
+        System.out.printf("%s = [",var);
+        for(long i : numeros){
+            System.out.printf("%d,",i);
+        }
+        System.out.println("]");
     }
 }
