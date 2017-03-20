@@ -11,17 +11,16 @@ import static org.junit.Assert.*;
 /**
  * Created by jcala on 12/03/2017.
  */
-public class DiccionarioTest {
+public class TestDiccionario {
 
 
 
 
     private Diccionario diccionario;
-    public static final int N = 5;
 
     @Before
     public void setUp(){
-        diccionario = new HashListas (N);
+        diccionario = new HashListas (5);
     }
 
 

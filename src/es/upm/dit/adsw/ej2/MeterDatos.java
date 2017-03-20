@@ -7,7 +7,7 @@ import java.util.Random;
  * Created by jose on 07-Dec-15.
  */
 @SuppressWarnings("Duplicates")
-public class Meter1Ops {
+public class MeterDatos {
     private static final Random random = new Random();
 
     private static int[] matlab1i,matlab2i;
